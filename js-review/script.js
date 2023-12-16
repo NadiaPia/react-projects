@@ -197,7 +197,7 @@ function getTotalReviewCount(book) {
 }
 */
 
-
+/*
 const books = getBooks();
 const titles = books.map(book => book.title);
 titles;
@@ -219,5 +219,54 @@ const adventureBooks = books
 const pagesAllBooks = books.reduce(((acc, book) => acc + book.pages), 0)
 pagesAllBooks
 
+//----------------Array sort method--(mutates the original array)-------------------------
+//by adding the slice() we create a copy of the array:
+const arr = [3, 7, 1, 9 ,6];
+const sorted = arr.slice().sort((a, b) => a - b);
+sorted;
+arr;
 
+const sortedByPages = books.slice().sort((a, b) => b.pages - a.pages);
+sortedByPages
+
+//Working wit immutable arrays
+//1) add book object to array
+
+const newBook = {
+  id: 6,
+  title: "Garry Potter and the Chamber of Secrets",
+  author: "J. K. Rowling",
+}
+
+const booksAfterAdding = [... books, newBook];
+//2) delete book object from array
+
+const bookAfterDelete = booksAfterAdding.filter(book => book.id !== 3);
+
+//3) update book object in the array
+const booksAfterUpdate = bookAfterDelete.map((book) => book.id === 1 ? {...book, title: "me"} : book);
+*/
+
+//--------------------Asynchronous  Promisses----------------------
+/*
+fetch("https://jsonplaceholder.typicode.com/todos")
+.then((res) => res.json())
+.then(data => console.log(data))
+
+console.log("Nadia")
+
+*/
+//--------------------Asynchronous Async/Await----------------------
+
+async function getTodos() {
+  const res = await fetch("https://jsonplaceholder.typicode.com/todos");
+  const data = await res.json();  
+  console.log(data)
+  return data;
+}
+
+const todos = getTodos();
+console.log(todos)
+
+console.log("Nadia")
 
