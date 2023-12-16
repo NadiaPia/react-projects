@@ -144,36 +144,80 @@ function getBook(id) {
 }
 
 //Destructuring
-const book = getBook(2);
+/*
+const book = getBook(3);
 
 // const title = book.title;
 // const author = book.author;
-//--------------------------------------------------------------------------Destructuring on objects------------------------------------------
-
+//--------------------------------------------------------------------------Destructuring on objects-----
 
 const {title, author, pages, publicationDate, genres, hasMovieAdaptation} = book;
-//console.log(title, author, genres);
 
 // const primaryGenre = genres[0];
 // const secondaryGenre = genres[1];
 
-//--------------------------------------------------------------------------Destructuring on arrays------------------------------------------
+//--------------------------------------------------------------------------Destructuring on arrays---------
 
 //const [primaryGenre, secondaryGenre] = genres;
 
-//--------------------------------------------------------------------------REST------------------------------------------
+//--------------------------------------------------------------------------REST------------------------------
 
 const [primaryGenre, secondaryGenre, ...otherGenres] = genres;
-//console.log(primaryGenre, secondaryGenre, otherGenres);
 
-//-----------------------------------------------------------------------Spread operator----------------------------------
+//-----------------------------------------------------------------------Spread operator-----------------
 
 const newGenres = [...genres, 'epis fantasy'];
-//console.log(newGenres);
-
 const updatedBook = {...book, moviePublicationDate: "2001-12-19", pages: 333};
-console.log(updatedBook)
 
+//-------------------------------------------------------------------Arrow functions----------------------------
+
+// function getYear(str) {
+//   return str.split("-")[0];
+// };
+
+const getYear = (str) => {
+  return str.split("-")[0];
+}
+
+//---------------------------------------------Circuiting and logical operators &&, ||, ??-----------
+
+//&& when the first value is false, it return false and stops, but when the first value is true it return the second value doesn't matter what it is.
+
+// || operator is oposite of the && opretor, but it has problem: 0 is consedered a false, but the expression "data = 0" is not false
+
+
+// ?? operator returns the first argument if it is not nullish (null or undefined).
+
+//---------------------------------Optinal Chaining oprator-------------------------------
+
+function getTotalReviewCount(book) {
+  const goodreads = book.reviews.goodreads.reviewsCount;
+  const librarything = book.reviews.librarything?.reviewsCount ?? 0;
+  return goodreads + librarything
+}
+*/
+
+
+const books = getBooks();
+const titles = books.map(book => book.title);
+titles;
+
+const essentialData = books.map(book => ({
+    title: book.title,
+    author: book.author
+  })
+);
+
+const longBooks = books
+.filter(book => book.pages > 500)
+.filter(book => book.hasMovieAdaptation);
+
+const adventureBooks = books
+.filter(book => book.genres.includes('adventure'))
+.map(book => book.title);
+
+const pagesAllBooks = books.reduce(((acc, book) => acc + book.pages), 0)
+pagesAllBooks
 
 
 
