@@ -268,5 +268,14 @@ async function getTodos() {
 const todos = getTodos();
 console.log(todos)
 
-console.log("Nadia")
+console.log("Nadia");
+
+const a = 5;
+const b = 3;
+const c = a + b;
+
+const answer = (c === 8) &&  "petia" && (c !== 7);
+
+answer
+
 
