@@ -6,13 +6,12 @@ const messages = [
   "Invest your new income 🤑",
 ];
 
-function App() {  
+function App() {
   return (
     <div>
-      <Steps /> 
-
+      <Steps />
     </div>
-  )
+  );
 }
 
 function Steps() {
@@ -25,13 +24,16 @@ function Steps() {
   function handleNext() {
     if (step < 3) {
       setStep((s) => s + 1); //It's better to update the state based on the current value by using a call back function. However< if it is not based on the current state< that it is ok to not use cb function
-      
-
     }
   }
   return (
     <>
-      <button className="close" onClick={() => setIsOpen((current) => !current)}>&times;</button>
+      <button
+        className="close"
+        onClick={() => setIsOpen((current) => !current)}
+      >
+        &times;
+      </button>
       {isOpen && (
         <div className="steps">
           <div className="numbers">
@@ -40,16 +42,16 @@ function Steps() {
             <div className={step >= 3 ? "active" : ""}>3</div>
           </div>
 
-          <p className="message">
-            Step {step}: {messages[step - 1]}
-          </p>
+          <StepMessage step={step}>{messages[step - 1]}</StepMessage>
 
           <div className="buttons">
-            
-            <Button bgColor="#7950f2" textColor="#fff" onClick={handlePrevious}><span>👈</span>Previous</Button>
+            <Button bgColor="#7950f2" textColor="#fff" onClick={handlePrevious}>
+              <span>👈</span>Previous
+            </Button>
 
-            <Button bgColor="#7950f2" textColor="#fff" onClick={handleNext}>Next<span>👉</span></Button>
-            
+            <Button bgColor="#7950f2" textColor="#fff" onClick={handleNext}>
+              Next<span>👉</span>
+            </Button>
           </div>
         </div>
       )}
@@ -57,11 +59,24 @@ function Steps() {
   );
 }
 
-function Button({textColor, bgColor, onClick, children}) {
+function StepMessage({ step, children }) {
+  return (    
+      <div className="message">
+        <h3>Step {step}: </h3>
+        {children}
+      </div>    
+  );
+}
+
+function Button({ textColor, bgColor, onClick, children }) {
   return (
-    <button style={{ backgroundColor: bgColor, color: textColor }}
-    onClick={onClick}>{children}</button>
-  )
+    <button
+      style={{ backgroundColor: bgColor, color: textColor }}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
 }
 
 export default App;
