@@ -6,7 +6,7 @@ export default function Form({ onAddItems }) {
     const [quantity, setQuantity] = useState(1);
   
     function handleSubmit(e) {
-      e.preventDefault();
+      e.preventDefault();  //to prevent send post request by itself as I need form to send it only after a button pressed
   
       if (!description) return;
       const newItem = { description, quantity, packed: false, id: Date.now() };
