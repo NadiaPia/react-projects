@@ -56,7 +56,7 @@ function App() {
         <Button onClick={handleSowAddFriend}>{showAddFriend ? "Close" : "Add friend"}</Button>
         
       </div>
-      {selectedFriend && <FormSplitllBill selectedFriend={selectedFriend} onSplitBill={handleSplitBill}/>}
+      {selectedFriend && <FormSplitllBill selectedFriend={selectedFriend} onSplitBill={handleSplitBill} key={selectedFriend.id}/>}
     </div>
   );
 }
