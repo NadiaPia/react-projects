@@ -67,7 +67,7 @@ export default function App() {
         </Box>
 
         <Box>
-          <WatchedSummory watched={watched} />
+          <WatchedSummary watched={watched} />
           <WatchedMoviesList watched={watched} />
         </Box>
         
@@ -142,7 +142,7 @@ function WatchedBox() {
       </button>
       {isOpen2 && (
         <>
-          <WatchedSummory watched={watched}/>
+          <WatchedSummary watched={watched}/>
           <WatchedMoviesList watched={watched}/>
           
         </>
@@ -176,7 +176,7 @@ function Movie({ movie }) {
   );
 }
 
-function WatchedSummory({ watched }) {
+function WatchedSummary({ watched }) {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
   const avgUserRating = average(watched.map((movie) => movie.userRating));
   const avgRuntime = average(watched.map((movie) => movie.runtime));

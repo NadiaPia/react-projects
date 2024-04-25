@@ -46,7 +46,7 @@ body {
   height: calc(100vh - 7.2rem - 3 * 2.4rem);
   display: flex;
   gap: 2.4rem;
-  justify-content: center;
+  justify-content: center;  
 }
 
 .box {
@@ -54,9 +54,20 @@ body {
   max-width: 42rem;
   background-color: var(--color-background-500);
   border-radius: 0.9rem;
-  /* overflow: scroll; */
-  overflow: none;
+  overflow: scroll;
+  /* overflow: none;  */
   position: relative;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.box::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.box {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .loader {
