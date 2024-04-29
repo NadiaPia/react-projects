@@ -32,12 +32,11 @@ export default function StarRating({
   onSetRating
 }) {
   //maxRating = 5 - a default quantity of elements, othewise it will not show elements
-
-  function handleRating(rating) {
-    setRating(rating);
-    onSetRating(rating)
-  }
-
+ 
+  
+  const [rating, setRating] = useState(defaultRating);
+  const [tempRating, setTempRating] = useState(0);
+  
   const textStyle = {
     lineHeight: "1",
     margin: "0",
@@ -45,10 +44,10 @@ export default function StarRating({
     fontSize: `${size / 1.5}px`
   };
   
- 
-
-  const [rating, setRating] = useState(defaultRating);
-  const [tempRating, setTempRating] = useState(0);
+  function handleRating(rating) {
+    setRating(rating);
+    onSetRating(rating)
+  }
 
   return (
     <div style={containerStyle} className={className}>
