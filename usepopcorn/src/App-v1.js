@@ -80,22 +80,32 @@ export default function App() {
   }
 
   useEffect(() => {
+
+    const controller = new AbortController(); //this is a browser API as well as the fetch function. We need this in the api querry to avoid sending query on every symbol that a user insert during typing the movie name.
+
     async function fetchMovies() {
       try {
         setIsLoading(true);
         setError("");
         const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`, {signal: controller.signal}
         );
 
         if (!res.ok) throw new Error("something went wrong");
         const data = await res.json();
         if (data.Response === "False") throw new Error("Movie not found");
+
         setMovies(data.Search);
-        console.log(data.Search);
+        setError("");
+        
       } catch (err) {
         console.error(err.message);
         setError(err.message);
+
+        if(error.name !== "AbortError") {
+          setError(err.message)
+        }
+
       } finally {
         //this block of code willbe always executed
         setIsLoading(false);
@@ -106,7 +116,11 @@ export default function App() {
       setError("");
       return;
     }
-    fetchMovies();
+    fetchMovies(); 
+
+    return function() {
+      controller.abort()
+    }
   }, [query]);
 
   return (
@@ -314,6 +328,12 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   useEffect(function () {
     if(!title) return;
     document.title = `Movie | ${title}`
+
+    //------Clean up function run when component unmounted
+    return function () {
+      document.title = 'usePopcorn';
+      console.log(`clean up effect for the movie ${title}` )
+    }
   }, [title]);  //[title] is because when the conponent amounts, the title is not gotten yet from the API, but when title is ready, it should be rerender again
 
   return (
