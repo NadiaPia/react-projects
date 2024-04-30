@@ -58,7 +58,7 @@ export default function App() {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("inception");
+  const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
   const tempQuery = "interstellar";
@@ -79,6 +79,7 @@ export default function App() {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !==id));
   }
 
+  
   useEffect(() => {
 
     const controller = new AbortController(); //this is a browser API as well as the fetch function. We need this in the api querry to avoid sending query on every symbol that a user insert during typing the movie name.
@@ -98,12 +99,10 @@ export default function App() {
         setMovies(data.Search);
         setError("");
         
-      } catch (err) {
-        console.error(err.message);
-        setError(err.message);
-
+      } catch (err) {        
         if(error.name !== "AbortError") {
-          setError(err.message)
+          console.log(err.message);          
+          setError(err.message);
         }
 
       } finally {
@@ -116,6 +115,8 @@ export default function App() {
       setError("");
       return;
     }
+
+    handleCloseMovie()
     fetchMovies(); 
 
     return function() {
@@ -311,6 +312,21 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   }
 
   useEffect(() => {
+    function callback (e) {
+      if(e.code === 'Escape') {
+        onCloseMovie();
+      }
+    }
+
+    document.addEventListener('keydown', callback);
+    return function() {
+
+      //to avoid running escape button we neew\d to close event listening to pressing this button:
+      document.removeEventListener("keydown", callback)
+    }
+  }, [onCloseMovie]);
+
+  useEffect(() => {
     async function getMovieDetails() {
       setIsLoading(true);
       const res = await fetch(
@@ -319,7 +335,6 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
       const data = await res.json();
       setMovie(data);
       setIsLoading(false);
-      //console.log("data", data)
     }
 
     getMovieDetails();
@@ -332,7 +347,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     //------Clean up function run when component unmounted
     return function () {
       document.title = 'usePopcorn';
-      console.log(`clean up effect for the movie ${title}` )
+      //console.log(`clean up effect for the movie ${title}` )
     }
   }, [title]);  //[title] is because when the conponent amounts, the title is not gotten yet from the API, but when title is ready, it should be rerender again
 
