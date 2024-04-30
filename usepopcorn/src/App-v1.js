@@ -280,7 +280,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     Director: director,
     Genre: genre,
   } = movie;
-  //console.log(title, year);
+  
 
   function handleAdd() {
     const newWatchedMovie = {
@@ -310,6 +310,12 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
 
     getMovieDetails();
   }, [selectedId]);
+
+  useEffect(function () {
+    if(!title) return;
+    document.title = `Movie | ${title}`
+  }, [title]);  //[title] is because when the conponent amounts, the title is not gotten yet from the API, but when title is ready, it should be rerender again
+
   return (
     <div className="details">
       {isLoading ? (
