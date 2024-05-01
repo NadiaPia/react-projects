@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import StarRating from "./StarRating";
+import { useMovies } from "./useMovies";
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
@@ -8,19 +9,18 @@ const KEY = "56db0cf5";
 
 export default function App() {
   
-  const [movies, setMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
+  const { movies, isLoading, error } = useMovies(query)
+
   //const [watched, setWatched] = useState([]);
   const [watched, setWatched] = useState(() => {
-    const storedValue = localStorage.getItem('watched');
+    const storedValue = localStorage.getItem("watched");
     return JSON.parse(storedValue);
   });
 
-  const tempQuery = "interstellar";
+  //const tempQuery = "interstellar";
 
   function handleSelectMovie(id) {
     setSelectedId(id);
@@ -41,50 +41,10 @@ export default function App() {
   }
 
   useEffect(() => {
-    localStorage.setItem('watched', JSON.stringify(watched))
-  }, [watched])
+    localStorage.setItem("watched", JSON.stringify(watched));
+  }, [watched]);
 
-  useEffect(() => {
-    const controller = new AbortController(); //this is a browser API as well as the fetch function. We need this in the api querry to avoid sending query on every symbol that a user insert during typing the movie name.
-
-    async function fetchMovies() {
-      try {
-        setIsLoading(true);
-        setError("");
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-          { signal: controller.signal }
-        );
-
-        if (!res.ok) throw new Error("something went wrong");
-        const data = await res.json();
-        if (data.Response === "False") throw new Error("Movie not found");
-
-        setMovies(data.Search);
-        setError("");
-      } catch (err) {
-        if (error.name !== "AbortError") {
-          console.log(err.message);
-          setError(err.message);
-        }
-      } finally {
-        //this block of code willbe always executed
-        setIsLoading(false);
-      }
-    }
-    if (query.length < 3) {
-      setMovies([]);
-      setError("");
-      return;
-    }
-
-    handleCloseMovie();
-    fetchMovies();
-
-    return function () {
-      controller.abort();
-    };
-  }, [query]);
+  
 
   return (
     <>
@@ -162,6 +122,32 @@ function NumResults({ movies }) {
 }
 
 function Search({ query, setQuery }) {
+  const inputEl = useRef(null); //null if we work just with the DOM elements
+
+  //calling DOM element is not about the React:
+
+  // useEffect(() => {
+  //   const el = document.querySelector('.search')
+  //   console.log("el", el);
+  //   el.focus();
+  // }, [])
+
+  //the better way is to use useRef:
+  useEffect(() => {
+    function callback(e) {
+      if (document.activeElement === inputEl.current)
+        //if in input we continue to search something. enter key will not work
+        return;
+      if (e.code === "Enter") {
+        inputEl.current.focus();
+        setQuery("");
+      }
+    }
+
+    document.addEventListener("keydown", callback);
+    return () => document.addEventListener("keydown", callback);
+  }, [setQuery]);
+
   return (
     <input
       className="search"
@@ -169,6 +155,7 @@ function Search({ query, setQuery }) {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
+      ref={inputEl}
     />
   );
 }
@@ -243,6 +230,12 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
 
+  const countRef = useRef(0); //to count amount of clicks of the rating
+
+  useEffect(() => {
+    if (userRating) countRef.current++;
+  }, [userRating]);
+
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
   const watchedUserRating = watched.find(
     (movie) => movie.imdbID === selectedId
@@ -277,10 +270,9 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   // }, [imdbRating])
 
   //the best way is derived state:
-  const isTop = imdbRating > 8;
-  console.log(isTop);
+  //const isTop = imdbRating > 8;
 
-  const [avgRating, setAvgRating] = useState(0);
+  //const [avgRating, setAvgRating] = useState(0);
 
   function handleAdd() {
     const newWatchedMovie = {
@@ -291,6 +283,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
       imdbRating: Number(imdbRating),
       runtime: Number(runtime.split(" ").at(0)),
       userRating,
+      countRatingDecisions: countRef.current,
     };
     onAddWatched(newWatchedMovie);
     onCloseMovie();
