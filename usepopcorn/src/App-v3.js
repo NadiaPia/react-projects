@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
 import { useLocalStorageState } from "./useLocalStorageState";
-import { useKey } from "./useKey";
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
@@ -112,12 +111,30 @@ function NumResults({ movies }) {
 
 function Search({ query, setQuery }) {
   const inputEl = useRef(null); //null if we work just with the DOM elements
-  
-  useKey("Enter", function() {
-    if (document.activeElement === inputEl.current)  return;
+
+  //calling DOM element is not about the React:
+
+  // useEffect(() => {
+  //   const el = document.querySelector('.search')
+  //   console.log("el", el);
+  //   el.focus();
+  // }, [])
+
+  //the better way is to use useRef:
+  useEffect(() => {
+    function callback(e) {
+      if (document.activeElement === inputEl.current)
+        //if in input we continue to search something. enter key will not work
+        return;
+      if (e.code === "Enter") {
         inputEl.current.focus();
         setQuery("");
-  }); 
+      }
+    }
+
+    document.addEventListener("keydown", callback);
+    return () => document.addEventListener("keydown", callback);
+  }, [setQuery]);
 
   return (
     <input
@@ -262,7 +279,21 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     // setAvgRating((avgRating) => (avgRating + userRating) / 2)
   }
 
-  useKey("Escape", onCloseMovie);
+  useEffect(() => {
+    function callback(e) {
+      if (e.code === "Escape") {
+        onCloseMovie();
+      }
+    };
+
+    document.addEventListener("keydown", callback);
+    return function () {
+      //to avoid running escape button we need to close event listener on pressing this button:
+      document.removeEventListener("keydown", callback);
+    };
+  }, [onCloseMovie]);
+
+
 
   useEffect(() => {
     async function getMovieDetails() {
